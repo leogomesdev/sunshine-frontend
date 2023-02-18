@@ -6,10 +6,14 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
+import Snackbar from "@mui/material/Snackbar";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import WbSunny from "@mui/icons-material/WbSunny";
-import { AuthContext } from "../auth/AuthContext";
+import Alert from "./shared/Alert";
+import AppConfig from "../configs/AppConfig";
+import AuthContext from "../auth/AuthContext";
+import Constants from "../constants/Constants";
 
 const Login: React.FC = () => {
   const { handleLogin } = useContext(AuthContext);
@@ -19,16 +23,14 @@ const Login: React.FC = () => {
   const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState("");
 
-  const baseUrl = process.env.REACT_APP_SUNSHINE_BACKEND_URL;
-
   let navigate = useNavigate();
 
   function validateEmail() {
-    if (email.trim() === "") {
+    if (email === "") {
       setEmailError("Email is required");
       return false;
     }
-    if (!/\S+@\S+\.\S+/.test(email)) {
+    if (!Constants.regex.email.test(email)) {
       setEmailError("Email is not valid");
       return false;
     }
@@ -57,7 +59,7 @@ const Login: React.FC = () => {
       return;
     }
 
-    fetch(`${baseUrl}/login`, {
+    fetch(`${AppConfig.backendUrl}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -87,6 +89,16 @@ const Login: React.FC = () => {
       });
   };
 
+  const closeAlert = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setError("");
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -101,9 +113,8 @@ const Login: React.FC = () => {
           <WbSunny />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Login
         </Typography>
-        {error && <p>{error}</p>}
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"
@@ -115,7 +126,7 @@ const Login: React.FC = () => {
             autoComplete="email"
             autoFocus
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(event) => setEmail(event.target.value.trim())}
             error={emailError !== ""}
             helperText={emailError}
           />
@@ -133,19 +144,28 @@ const Login: React.FC = () => {
             error={passwordError !== ""}
             helperText={passwordError}
           />
+          <Snackbar
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            onClose={closeAlert}
+            open={Boolean(error)}
+            autoHideDuration={6000}
+          >
+            <Alert onClose={closeAlert} severity="error" sx={{ width: "100%" }}>
+              {error}
+            </Alert>
+          </Snackbar>
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Login
           </Button>
           <Grid container>
             <Grid item>
-              Don't have an account yet?
-              <Link href="#" variant="body2" sx={{ ml: 1, mr: 1 }}>
-                {"Sign up now"}
+              <Link href="/register" variant="body2">
+                {"Don't have an account yet? Register now"}
               </Link>
             </Grid>
           </Grid>
