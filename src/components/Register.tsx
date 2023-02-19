@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -14,7 +15,7 @@ import { FormHelperText } from "@mui/material";
 import Alert from "./shared/Alert";
 import AppConfig from "../configs/AppConfig";
 import AuthContext from "../auth/AuthContext";
-import Constants from "../constants/Constants";
+import Constants from "../configs/Constants";
 
 const Register: React.FC = () => {
   const { handleLogin } = useContext(AuthContext);
@@ -115,33 +116,25 @@ const Register: React.FC = () => {
     if (!validateFormData()) {
       return;
     }
-    fetch(`${AppConfig.backendUrl}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        if (response.status >= 400 && response.status < 500) {
-          setError("@TODO");
-          return;
-        }
-        throw new Error(
-          `Network response error: ${response.status} ${response.statusText}`
-        );
+    axios
+      .post(`${AppConfig.backendUrl}/auth/register`, {
+        name,
+        email,
+        password,
+        passwordConfirmation,
       })
-      .then((data) => {
+      .then((response) => {
         setError("");
-        localStorage.setItem("authInfo", JSON.stringify(data));
+        localStorage.setItem("authToken", response.data.token);
         handleLogin();
         navigate("/");
       })
-      .catch((err) => {
-        setError(err.message);
+      .catch((error) => {
+        if (["404", "500"].includes(error.response.status)) {
+          setError(error.message);
+          return;
+        }
+        setError(error.response?.data?.message || error?.message);
       });
   };
 

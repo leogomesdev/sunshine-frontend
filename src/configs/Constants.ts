@@ -1,3 +1,6 @@
+/**
+ * Centralize constant values through the application
+ */
 const Constants = {
   regex: {
     password: {

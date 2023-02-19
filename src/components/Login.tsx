@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -13,7 +14,7 @@ import WbSunny from "@mui/icons-material/WbSunny";
 import Alert from "./shared/Alert";
 import AppConfig from "../configs/AppConfig";
 import AuthContext from "../auth/AuthContext";
-import Constants from "../constants/Constants";
+import Constants from "../configs/Constants";
 
 const Login: React.FC = () => {
   const { handleLogin } = useContext(AuthContext);
@@ -59,33 +60,23 @@ const Login: React.FC = () => {
       return;
     }
 
-    fetch(`${AppConfig.backendUrl}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        if (response.status === 401) {
-          setError("Incorrect email or password");
-          return;
-        }
-        throw new Error(
-          `Network response error: ${response.status} ${response.statusText}`
-        );
+    axios
+      .post(`${AppConfig.backendUrl}/auth/login`, {
+        email,
+        password,
       })
-      .then((data) => {
+      .then((response) => {
         setError("");
-        localStorage.setItem("authInfo", JSON.stringify(data));
+        localStorage.setItem("authToken", response.data.token);
         handleLogin();
         navigate("/");
       })
-      .catch((err) => {
-        setError(err.message);
+      .catch((error) => {
+        if (["404", "500"].includes(error.response.status)) {
+          setError(error.message);
+          return;
+        }
+        setError(error.response?.data?.message || error?.message);
       });
   };
 
