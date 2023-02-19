@@ -3,7 +3,7 @@ import "./App.css";
 import AuthProvider from "./auth/AuthProvider";
 import Home from "./components/Home";
 import Login from "./components/Login";
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "./routes/PrivateRoute";
 import Register from "./components/Register";
 
 const App: React.FC = () => {
