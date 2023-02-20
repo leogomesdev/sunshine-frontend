@@ -8,8 +8,8 @@ import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import WbSunny from "@mui/icons-material/WbSunny";
-import AuthContext from "../auth/AuthContext";
-import theme from "../theme";
+import AuthContext from "../../auth/AuthContext";
+import theme from "../../theme";
 
 const Home: React.FC = () => {
   const { handleLogout } = useContext(AuthContext);
