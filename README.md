@@ -1,46 +1,82 @@
-# Getting Started with Create React App
+# 🌞 SUNSHINE (Frontend)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+See the application structure in the image below:
+![System tiers](docs/images/tiers.png)
 
-## Available Scripts
+This is the Frontend application.
+For the Backend application, please go to [https://github.com/leogomesdev/sunshine-backend](https://github.com/leogomesdev/sunshine-backend)
 
-In the project directory, you can run:
+## 📚 Description
 
-### `npm start`
+This application contains a register page and a login page. After logging in, the user can see the sunshine ;)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 📲 Main technologies used
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- [React](https://reactjs.org), a JavaScript library for building user interfaces
+- [Material UI](https://mui.com), the library of React components which implements Google's Material Design
+- [TypeScript](https://www.typescriptlang.org), JavaScript with syntax for types
+- [Jest](https://jestjs.io) for unit tests
+- [Commitizen command line tool](https://github.com/commitizen/cz-cli)
+- [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/)
+- [Create React App](https://github.com/facebook/create-react-app), used to bootstrap this project
 
-### `npm test`
+## 💡 Requirements
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 💻 For local usage:
 
-### `npm run build`
+- [Node.js](https://nodejs.org) (v18)
+- [npm](https://www.npmjs.com)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🚀 Running
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 🐳 Using Docker
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Install [Docker Desktop](https://docs.docker.com/desktop)
+- Clone both repositories: [sunshine-frontend](https://github.com/leogomesdev/sunshine-frontend) and [sunshine-backend](<(https://github.com/leogomesdev/sunshine-backend)>)
+- Access the root folder for one of the projects
+- Run:
+  ```bash
+    docker-compose up
+  ```
+- This command will create and run 3 containers:
+  - db: a MongoDB local instance
+  - api: the sunshine-backend project
+  - app: the sunshine-frontend project
 
-### `npm run eject`
+### 💻 Locally
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Be sure to install the [requirements](#requirements)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  - If you have [nvm - Node Version Manager](https://github.com/nvm-sh/nvm) installed, you could just run `nvm install` and it will install the correct version of Node.js based on file `.nvmrc`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- Create the .env file:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+  ```bash
+    cp -v .env.example .env
+  ```
 
-## Learn More
+- Edit the .env file to provide the required environment variables.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Install dependencies:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  ```bash
+    npm install
+  ```
+
+- Start the application:
+  ```bash
+    npm run start
+  ```
+
+## 🔗 Usage (Frontend)
+
+1. Access the login page for sign-in or the registration page for sign-up.
+   On the local (docker-compose) environment, open your browser and navigate to [http://localhost:3000](http://localhost:3000)
+   ![Login Page - mobile view](docs/images/login-page.png)
+
+### ✅ Tests
+
+```bash
+  # unit tests
+  npm test
+```
