@@ -12,7 +12,7 @@ This application contains a register page and a login page. After logging in, th
 
 ## 📲 Main technologies used
 
-- [React](https://reactjs.org), a JavaScript library for building user interfaces
+- [React](https://reactjs.org) version 18, a JavaScript library for building user interfaces
 - [Material UI](https://mui.com), the library of React components which implements Google's Material Design
 - [TypeScript](https://www.typescriptlang.org), JavaScript with syntax for types
 - [Jest](https://jestjs.io) for unit tests
