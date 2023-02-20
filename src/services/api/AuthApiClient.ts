@@ -1,16 +1,23 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import AppConfig from "../../configs/AppConfig";
 import ILoginResponse from "../interfaces/ILoginResponse";
 import IRegisterResponse from "../interfaces/IRegisterResponse";
+
+const config: AxiosRequestConfig = {
+  headers: {
+    "Content-Type": "application/json",
+  },
+};
 
 export const loginRequest = (
   email: string,
   password: string
 ): Promise<ILoginResponse> => {
-  return axios.post(`${AppConfig.backendUrl}/auth/login`, {
+  const data = {
     email,
     password,
-  });
+  };
+  return axios.post(`${AppConfig.backendUrl}/auth/login`, data, config);
 };
 
 export const registerRequest = (
@@ -19,10 +26,11 @@ export const registerRequest = (
   password: string,
   passwordConfirmation: string
 ): Promise<IRegisterResponse> => {
-  return axios.post(`${AppConfig.backendUrl}/auth/register`, {
+  const data = {
     name,
     email,
     password,
     passwordConfirmation,
-  });
+  };
+  return axios.post(`${AppConfig.backendUrl}/auth/register`, data, config);
 };
