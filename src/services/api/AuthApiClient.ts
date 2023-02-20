@@ -1,6 +1,7 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import AppConfig from "../../configs/AppConfig";
 import ILoginResponse from "../interfaces/ILoginResponse";
+import IRegisterResponse from "../interfaces/IRegisterResponse";
 
 export const loginRequest = (
   email: string,
@@ -17,7 +18,7 @@ export const registerRequest = (
   email: string,
   password: string,
   passwordConfirmation: string
-): Promise<AxiosResponse<any, any>> => {
+): Promise<IRegisterResponse> => {
   return axios.post(`${AppConfig.backendUrl}/auth/register`, {
     name,
     email,
