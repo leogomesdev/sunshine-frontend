@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -11,10 +10,11 @@ import Snackbar from "@mui/material/Snackbar";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import WbSunny from "@mui/icons-material/WbSunny";
-import Alert from "./shared/Alert";
-import AppConfig from "../configs/AppConfig";
-import AuthContext from "../auth/AuthContext";
-import Constants from "../configs/Constants";
+import Alert from "../shared/Alert";
+import AuthContext from "../../auth/AuthContext";
+import Constants from "../../configs/Constants";
+import { loginRequest } from "../../services/api/AuthApiClient";
+import ILoginResponse from "../../services/interfaces/ILoginResponse";
 
 const Login: React.FC = () => {
   const { handleLogin } = useContext(AuthContext);
@@ -24,9 +24,9 @@ const Login: React.FC = () => {
   const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState("");
 
-  let navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
 
-  function validateEmail() {
+  function validateEmail(): boolean {
     if (email === "") {
       setEmailError("Email is required");
       return false;
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
     return true;
   }
 
-  function validatePassword() {
+  function validatePassword(): boolean {
     if (password.trim() === "") {
       setPasswordError("Password is required");
       return false;
@@ -48,31 +48,31 @@ const Login: React.FC = () => {
     return true;
   }
 
-  function validateFormData() {
+  function validateFormData(): boolean {
     const emailIsValid = validateEmail();
     const passwordIsValid = validatePassword();
     return emailIsValid && passwordIsValid;
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (!validateFormData()) {
       return;
     }
 
-    axios
-      .post(`${AppConfig.backendUrl}/auth/login`, {
-        email,
-        password,
-      })
-      .then((response) => {
+    loginRequest(email, password)
+      .then((response: ILoginResponse) => {
+        if (!response?.data?.token) {
+          setError("Error while communicating with the API");
+          return;
+        }
         setError("");
         localStorage.setItem("authToken", response.data.token);
         handleLogin();
         navigate("/");
       })
-      .catch((error) => {
-        if (["404", "500"].includes(error.response.status)) {
+      .catch((error: any) => {
+        if (["404", "500"].includes(error?.response?.status)) {
           setError(error.message);
           return;
         }
@@ -81,9 +81,9 @@ const Login: React.FC = () => {
   };
 
   const closeAlert = (
-    event?: React.SyntheticEvent | Event,
+    _event?: React.SyntheticEvent | Event,
     reason?: string
-  ) => {
+  ): void => {
     if (reason === "clickaway") {
       return;
     }

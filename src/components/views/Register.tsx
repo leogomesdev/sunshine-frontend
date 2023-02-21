@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,10 +11,11 @@ import Snackbar from "@mui/material/Snackbar";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { FormHelperText } from "@mui/material";
-import Alert from "./shared/Alert";
-import AppConfig from "../configs/AppConfig";
-import AuthContext from "../auth/AuthContext";
-import Constants from "../configs/Constants";
+import Alert from "../shared/Alert";
+import AuthContext from "../../auth/AuthContext";
+import Constants from "../../configs/Constants";
+import { registerRequest } from "../../services/api/AuthApiClient";
+import IRegisterResponse from "../../services/interfaces/IRegisterResponse";
 
 const Register: React.FC = () => {
   const { handleLogin } = useContext(AuthContext);
@@ -46,9 +46,9 @@ const Register: React.FC = () => {
     };
   }
 
-  let navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
 
-  function validateName() {
+  function validateName(): boolean {
     if (name.trim() === "") {
       setNameError("Name is required");
       return false;
@@ -57,7 +57,7 @@ const Register: React.FC = () => {
     return true;
   }
 
-  function validateEmail() {
+  function validateEmail(): boolean {
     if (email === "") {
       setEmailError("Email is required");
       return false;
@@ -70,7 +70,7 @@ const Register: React.FC = () => {
     return true;
   }
 
-  function validatePassword() {
+  function validatePassword(): boolean {
     if (password === "") {
       setPasswordError("Password is required");
       return false;
@@ -83,7 +83,7 @@ const Register: React.FC = () => {
     return true;
   }
 
-  function validatePasswordConfirmation() {
+  function validatePasswordConfirmation(): boolean {
     if (passwordConfirmation === "") {
       setPasswordConfirmationError("Password Confirmation is required");
       return false;
@@ -98,7 +98,7 @@ const Register: React.FC = () => {
     return true;
   }
 
-  function validateFormData() {
+  function validateFormData(): boolean {
     const nameIsValid = validateName();
     const emailIsValid = validateEmail();
     const passwordIsValid = validatePassword();
@@ -111,26 +111,25 @@ const Register: React.FC = () => {
     );
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (!validateFormData()) {
       return;
     }
-    axios
-      .post(`${AppConfig.backendUrl}/auth/register`, {
-        name,
-        email,
-        password,
-        passwordConfirmation,
-      })
-      .then((response) => {
+
+    registerRequest(name, email, password, passwordConfirmation)
+      .then((response: IRegisterResponse) => {
+        if (!response?.data?.token) {
+          setError("Error while communicating with the API");
+          return;
+        }
         setError("");
         localStorage.setItem("authToken", response.data.token);
         handleLogin();
         navigate("/");
       })
-      .catch((error) => {
-        if (["404", "500"].includes(error.response.status)) {
+      .catch((error: any) => {
+        if (["404", "500"].includes(error?.response?.status)) {
           setError(error.message);
           return;
         }
@@ -139,9 +138,9 @@ const Register: React.FC = () => {
   };
 
   const closeAlert = (
-    event?: React.SyntheticEvent | Event,
+    _event?: React.SyntheticEvent | Event,
     reason?: string
-  ) => {
+  ): void => {
     if (reason === "clickaway") {
       return;
     }
